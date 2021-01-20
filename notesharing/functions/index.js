@@ -6,11 +6,11 @@ const {
   postOneNote,
   deleteOneNote,
   editNote,
-  //   getOneNote,
+  getOneNote,
 } = require("./APIs/notes");
 
 app.put("/note/:noteId", editNote);
-// app.get("/note/:noteId", getOneNote);
+app.get("/note/:noteId", getOneNote);
 app.delete("/note/:noteId", deleteOneNote);
 app.post("/note", postOneNote);
 app.get("/notes", getAllNotes);

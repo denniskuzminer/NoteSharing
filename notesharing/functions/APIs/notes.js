@@ -1,4 +1,9 @@
-const { db } = require("../util/admin");
+const { admin, db } = require("../util/admin");
+const config = require("../util/config");
+const BusBoy = require("busboy");
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
 
 exports.getAllNotes = (request, response) => {
   db.collection("notes")
@@ -13,7 +18,7 @@ exports.getAllNotes = (request, response) => {
           class: doc.data().class,
           title: doc.data().title,
           description: doc.data().description,
-          imageURL: doc.data().imageURL,
+          fileUrl: doc.data().fileUrl,
           createdAt: doc.data().createdAt,
         });
       });
@@ -25,7 +30,86 @@ exports.getAllNotes = (request, response) => {
     });
 };
 
-/*exports.getOneNote = (request, response) => {
+deleteFile = (fileName) => {
+  const bucket = admin.storage().bucket();
+  const path = `${fileName}`;
+  return bucket
+    .file(path)
+    .delete()
+    .then(() => {
+      return;
+    })
+    .catch((error) => {
+      return;
+    });
+};
+
+exports.postOneNote = async (request, response, next) => {
+  const busboy = new BusBoy({ headers: request.headers });
+  let fileName;
+  let fileToBeUploaded = {};
+  let newNoteItem = {};
+  busboy.on(
+    "field",
+    (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
+      newNoteItem[fieldname] = val;
+    }
+  );
+  busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+    if (
+      mimetype !== "image/png" &&
+      mimetype !== "image/jpeg" &&
+      mimetype !== "application/pdf"
+    ) {
+      return response.status(400).json({ error: "Wrong file type submited" });
+    }
+    const fileExtension = filename.split(".")[filename.split(".").length - 1];
+    fileName = `${newNoteItem.school} ${newNoteItem.class} ${newNoteItem.title}.${fileExtension}`
+      .split(" ")
+      .join("_");
+    const filePath = path.join(os.tmpdir(), fileName);
+    fileToBeUploaded = { filePath, mimetype };
+    file.pipe(fs.createWriteStream(filePath));
+  });
+  deleteFile(fileName);
+  busboy.on("finish", () => {
+    admin
+      .storage()
+      .bucket()
+      .upload(fileToBeUploaded.filePath, {
+        resumable: false,
+        metadata: {
+          metadata: {
+            contentType: fileToBeUploaded.mimetype,
+          },
+        },
+      })
+      .then(() => {
+        newNoteItem.fileUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${fileName}?alt=media`;
+        newNoteItem.createdAt = new Date().toISOString();
+        return db
+          .collection("notes")
+          .add(newNoteItem)
+          .then((docRef) => {
+            return response.json({ id: docRef.id });
+          })
+          .catch((error) => {
+            console.error(error);
+            return response.status(500).json({ error: error.code });
+          });
+      })
+      .then(() => {
+        return response.json({ message: "Uploaded successfully" });
+      })
+      .catch((error) => {
+        console.error(error);
+        return response.status(500).json({ error: error.code });
+      });
+  });
+  busboy.end(request.rawBody);
+};
+
+exports.getOneNote = (request, response) => {
   db.doc(`/notes/${request.params.noteId}`)
     .get()
     .then((doc) => {
@@ -33,9 +117,6 @@ exports.getAllNotes = (request, response) => {
         return response.status(404).json({
           error: "Note not found",
         });
-      }
-      if (doc.data().username !== request.user.username) {
-        return response.status(403).json({ error: "Unauthorized" });
       }
       NoteData = doc.data();
       NoteData.noteId = doc.id;
@@ -45,45 +126,7 @@ exports.getAllNotes = (request, response) => {
       console.error(err);
       return response.status(500).json({ error: error.code });
     });
-};*/
-
-exports.postOneNote = (request, response) => {
-  if (request.body.class.trim() === "")
-    return response.status(400).json({ class: "Must not be empty" });
-  else if (request.body.title.trim() === "")
-    return response.status(400).json({ title: "Must not be empty" });
-  else if (request.body.school.trim() === "")
-    return response.status(400).json({ school: "Must not be empty" });
-  else if (request.body.description.trim() === "")
-    return response.status(400).json({ description: "Must not be empty" });
-  else {
-    const newNoteItem = {
-      school: request.body.school,
-      class: request.body.class,
-      title: request.body.title,
-      description: request.body.description,
-      imageURL: request.body.imageURL,
-      createdAt: new Date().toISOString(),
-    };
-    db.collection("notes")
-      .add(newNoteItem)
-      .then((doc) => {
-        const responseNoteItem = newNoteItem;
-        responseNoteItem.id = doc.id;
-        return response.json(responseNoteItem);
-      })
-      .catch((err) => {
-        response.status(500).json({ error: "Something went wrong" });
-        console.error(err);
-      });
-  }
-}; /*{
-  "school": "New York University",
-  "class": "Computer Systems Organization",
-  "title": "Lab 1",
-  "description": "Some code stuff",
-  "imageURL": ""
-} */
+};
 
 exports.deleteOneNote = (request, response) => {
   const document = db.doc(`/notes/${request.params.noteId}`);
@@ -96,7 +139,7 @@ exports.deleteOneNote = (request, response) => {
       return document.delete();
     })
     .then(() => {
-      response.json({ message: "Delete successfull" });
+      response.json({ message: "Delete successful" });
     })
     .catch((err) => {
       console.error(err);
@@ -104,21 +147,104 @@ exports.deleteOneNote = (request, response) => {
     });
 };
 
-exports.editNote = (request, response) => {
-  if (request.body.noteId || request.body.createdAt) {
-    response.status(403).json({ message: "Not allowed to edit" });
-  } else {
-    let document = db.collection("notes").doc(`${request.params.noteId}`);
-    document
-      .update(request.body)
-      .then(() => {
-        response.json({ message: "Updated successfully" });
-      })
-      .catch((err) => {
-        console.error(err);
-        return response.status(500).json({
-          error: err.code,
+exports.editNote = async (request, response) => {
+  const busboy = new BusBoy({ headers: request.headers });
+  let fileName;
+  let fileToBeUploaded = {};
+  let newNoteItem = {};
+  await db
+    .doc(`/notes/${request.params.noteId}`)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        return response.status(404).json({
+          error: "Note not found",
         });
-      });
-  }
+      }
+      newNoteItem = doc.data();
+    })
+    .catch((err) => {
+      console.error(err);
+      return response.status(500).json({ error: error.code });
+    });
+  let hasFiles = false;
+  busboy.on(
+    "field",
+    (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
+      newNoteItem[fieldname] = val;
+      if (fieldname == "noteId" || fieldname == "createdAt") {
+        return response.status(403).json({ message: "Not allowed to edit" });
+      }
+    }
+  );
+
+  busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+    hasFiles = true;
+    if (
+      mimetype !== "image/png" &&
+      mimetype !== "image/jpeg" &&
+      mimetype !== "application/pdf"
+    ) {
+      return response.status(400).json({ error: "Wrong file type submited" });
+    }
+    const fileExtension = filename.split(".")[filename.split(".").length - 1];
+    fileName = `${newNoteItem.school} ${newNoteItem.class} ${newNoteItem.title}.${fileExtension}`
+      .split(" ")
+      .join("_");
+    const filePath = path.join(os.tmpdir(), fileName);
+    fileToBeUploaded = { filePath, mimetype };
+    file.pipe(fs.createWriteStream(filePath));
+  });
+  busboy.on("finish", () => {
+    if (hasFiles) {
+      deleteFile(fileName);
+      admin
+        .storage()
+        .bucket()
+        .upload(fileToBeUploaded.filePath, {
+          resumable: false,
+          metadata: {
+            metadata: {
+              contentType: fileToBeUploaded.mimetype,
+            },
+          },
+        })
+        .then(() => {
+          newNoteItem.fileUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${fileName}?alt=media`;
+          let document = db.collection("notes").doc(`${request.params.noteId}`);
+          document
+            .update(newNoteItem)
+            .then(() => {
+              response.json({ message: "Updated successfully" });
+            })
+            .catch((err) => {
+              console.error(err);
+              return response.status(500).json({
+                error: err.code,
+              });
+            });
+        })
+        .then(() => {
+          return response.json({ message: "Updated successfully" });
+        })
+        .catch((error) => {
+          console.error(error);
+          return response.status(500).json({ error: error.code });
+        });
+    } else {
+      let document = db.collection("notes").doc(`${request.params.noteId}`);
+      document
+        .update(newNoteItem)
+        .then(() => {
+          response.json({ message: "Updated successfully" });
+        })
+        .catch((err) => {
+          console.error(err);
+          return response.status(500).json({
+            error: err.code,
+          });
+        });
+    }
+  });
+  busboy.end(request.rawBody);
 };

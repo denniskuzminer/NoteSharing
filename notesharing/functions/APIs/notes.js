@@ -7,6 +7,7 @@ const fs = require("fs");
 
 exports.getAllNotes = (request, response) => {
   db.collection("notes")
+    .where('username', '==', request.user.username)
     .orderBy("createdAt", "desc")
     .get()
     .then((data) => {
@@ -87,6 +88,7 @@ exports.postOneNote = async (request, response, next) => {
       .then(() => {
         newNoteItem.fileUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${fileName}?alt=media`;
         newNoteItem.createdAt = new Date().toISOString();
+        newNoteItem.username = request.user.username; //add username
         return db
           .collection("notes")
           .add(newNoteItem)

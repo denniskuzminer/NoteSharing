@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const app = require("express")();
+const auth = require('./util/auth');
 
 const {
   getAllNotes,
@@ -9,15 +10,13 @@ const {
   getOneNote,
 } = require("./APIs/notes");
 
-app.put("/note/:noteId", editNote);
+app.put("/note/:noteId", auth, editNote);
 app.get("/note/:noteId", getOneNote);
-app.delete("/note/:noteId", deleteOneNote);
-app.post("/note", postOneNote);
-app.get("/notes", getAllNotes);
+app.delete("/note/:noteId", auth, deleteOneNote);
+app.post("/note", auth, postOneNote);
+app.get("/notes", auth, getAllNotes);
 
 //######### Authentification #########//
-const auth = require('./util/auth');
-
 const {
     loginUser,
     signUpUser,

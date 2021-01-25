@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 
 import Account from "../components/account";
-import Todo from "../components/todo";
+import Note from "../components/note";
 
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -55,7 +55,7 @@ const styles = (theme) => ({
     zIndex: "1000",
     height: "31px",
     width: "31px",
-    left: "50%",
+    left: "45%",
     top: "35%",
   },
   toolbar: theme.mixins.toolbar,
@@ -70,7 +70,7 @@ class home extends Component {
     this.setState({ render: true });
   };
 
-  loadTodoPage = (event) => {
+  loadNotePage = (event) => {
     this.setState({ render: false });
   };
 
@@ -103,7 +103,7 @@ class home extends Component {
           firstName: response.data.userCredentials.firstName,
           lastName: response.data.userCredentials.lastName,
           email: response.data.userCredentials.email,
-          phoneNumber: response.data.userCredentials.phoneNumber,
+          school: response.data.userCredentials.school,
           country: response.data.userCredentials.country,
           username: response.data.userCredentials.username,
           uiLoading: false,
@@ -136,7 +136,7 @@ class home extends Component {
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
               <Typography variant="h6" noWrap>
-                TodoApp
+                NoteSharing App
               </Typography>
             </Toolbar>
           </AppBar>
@@ -161,12 +161,12 @@ class home extends Component {
             </center>
             <Divider />
             <List>
-              <ListItem button key="Todo" onClick={this.loadTodoPage}>
+              <ListItem button key="Note" onClick={this.loadNotePage}>
                 <ListItemIcon>
                   {" "}
                   <NotesIcon />{" "}
                 </ListItemIcon>
-                <ListItemText primary="Todo" />
+                <ListItemText primary="Note" />
               </ListItem>
 
               <ListItem button key="Account" onClick={this.loadAccountPage}>
@@ -187,9 +187,11 @@ class home extends Component {
             </List>
           </Drawer>
 
-          <div>{this.state.render ? <Account /> : <Todo />}</div>
+          <div>{this.state.render ? <Account /> : <Note />}</div>
         </div>
       );
     }
   }
 }
+
+export default withStyles(styles)(home);

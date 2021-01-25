@@ -1,5 +1,6 @@
 const functions = require("firebase-functions");
 const app = require("express")();
+const auth = require("./util/auth");
 
 const {
   getAllNotes,
@@ -9,29 +10,24 @@ const {
   getOneNote,
 } = require("./APIs/notes");
 
-app.put("/note/:noteId", editNote);
+app.put("/note/:noteId", auth, editNote);
 app.get("/note/:noteId", getOneNote);
-app.delete("/note/:noteId", deleteOneNote);
-app.post("/note", postOneNote);
-app.get("/notes", getAllNotes);
-
-//######### Authentification #########//
-const auth = require('./util/auth');
+app.delete("/note/:noteId", auth, deleteOneNote);
+app.post("/note", auth, postOneNote);
+app.get("/notes", auth, getAllNotes);
 
 const {
-    loginUser,
-    signUpUser,
-    uploadProfilePhoto,
-    getUserDetail,
-    updateUserDetails
-} = require('./APIs/users')
+  loginUser,
+  signUpUser,
+  uploadProfilePhoto,
+  getUserDetail,
+  updateUserDetails,
+} = require("./APIs/users");
 
-
-app.post('/login', loginUser);
-app.post('/signup', signUpUser);
-app.post('/user/image', auth, uploadProfilePhoto);
-app.get('/user', auth, getUserDetail);
-app.post('/user', auth, updateUserDetails);
-//######### Authentification #########//
+app.post("/login", loginUser);
+app.post("/signup", signUpUser);
+app.post("/user/image", auth, uploadProfilePhoto);
+app.get("/user", auth, getUserDetail);
+app.post("/user", auth, updateUserDetails);
 
 exports.api = functions.https.onRequest(app);

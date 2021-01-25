@@ -127,7 +127,7 @@ class login extends Component {
               fullWidth
               name="password"
               label="Password"
-              // type="password"
+              type="password"
               id="password"
               autoComplete="current-password"
               helperText={errors.password}

@@ -49,15 +49,28 @@ const styles = (theme) => ({
     right: 0,
   },
   form: {
-    width: "90%",
+    width: "96.8%",
     marginLeft: 13,
-    marginTop: theme.spacing(11),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   toolbar: theme.mixins.toolbar,
   root: {
     minWidth: 470,
   },
-  noteChange: { top: "20px", width: "90%" },
+  noteChange: {
+    top: "94px",
+    width: "60%",
+    marginLeft: 340,
+  },
+  noteChangeTitle: {
+    top: "97px",
+    width: "56%",
+    marginLeft: 13,
+    right: 305,
+    borderTopRightRadius: "5px",
+    borderTopLeftRadius: "5px",
+  },
   bullet: {
     display: "inline-block",
     margin: "0 2px",
@@ -302,13 +315,14 @@ class note extends Component {
             <AddCircleIcon style={{ fontSize: 60 }} />
           </IconButton>
           <Dialog
+            maxWidth
             // fullScreen
             className={classes.noteChange}
             open={open}
             onClose={handleClose}
             TransitionComponent={Transition}
           >
-            <AppBar className={classes.noteChange}>
+            <AppBar className={classes.noteChangeTitle}>
               <Toolbar>
                 <IconButton
                   edge="start"
@@ -410,8 +424,8 @@ class note extends Component {
                     name="description"
                     autoComplete="noteDescription"
                     multiline
-                    rows={3}
-                    rowsMax={25}
+                    rows={6}
+                    rowsMax={6}
                     helperText={errors.description}
                     error={errors.description ? true : false}
                     onChange={this.handleChange}

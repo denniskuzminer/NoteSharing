@@ -14,6 +14,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import CardContent from "@material-ui/core/CardContent";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -25,12 +26,13 @@ import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 
+import PDFViewer from "pdf-viewer-reactjs";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const styles = (theme) => ({
-  // .., // Existing CSS elements
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
@@ -259,9 +261,6 @@ class note extends Component {
           data: form_data,
         };
       }
-      //   for (var value of form_data.values()) {
-      //     console.log(value);
-      //   }
       const authToken = localStorage.getItem("AuthToken");
       axios.defaults.headers.common = { Authorization: `${authToken}` };
       axios(options)
@@ -272,12 +271,13 @@ class note extends Component {
         .catch((error) => {
           if (error.response.status === 403) {
             this.props.history.push("/login");
+          } else {
+            console.log(error);
+            this.setState({
+              uiLoading: false,
+              imageError: "Error in posting the data",
+            });
           }
-          console.log(error);
-          this.setState({
-            uiLoading: false,
-            imageError: "Error in posting the data",
-          });
 
           //   this.setState({ open: true, errors: error.response.data });
           //   console.log(error);
@@ -396,23 +396,20 @@ class note extends Component {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Button variant="contained" component="label">
+                  <Button
+                    variant="contained"
+                    startIcon={<CloudUploadIcon />}
+                    color="primary"
+                    type="submit"
+                    component="label"
+                  >
                     Upload File
-                    <input type="file" onChange={this.handleFileChange} />
+                    <input
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={this.handleFileChange}
+                    />
                   </Button>
-                  {/* <TextField
-                    variant="outlined"
-                    required
-                    fullWidth
-                    id="noteFile"
-                    label="Class"
-                    name="class"
-                    autoComplete="noteClass"
-                    helperText={errors.class}
-                    value={this.state.fileUrl}
-                    error={errors.fileUrl ? true : false}
-                    onChange={this.handleChange}
-                  /> */}
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -485,6 +482,7 @@ class note extends Component {
             aria-labelledby="customized-dialog-title"
             open={viewOpen}
             fullWidth
+            //fullScreen
             classes={{ paperFullWidth: classes.dialogeStyle }}
           >
             <DialogTitle id="customized-dialog-title" onClose={handleViewClose}>
@@ -494,12 +492,63 @@ class note extends Component {
               <TextField
                 fullWidth
                 id="noteDetails"
-                name="body"
+                name="school"
                 multiline
                 readonly
                 rows={1}
                 rowsMax={25}
-                value={this.state.body}
+                value={this.state.school}
+                InputProps={{
+                  disableUnderline: true,
+                }}
+              />
+            </DialogContent>
+            <DialogContent dividers>
+              <TextField
+                fullWidth
+                id="noteDetails"
+                name="class"
+                multiline
+                readonly
+                rows={1}
+                rowsMax={25}
+                value={this.state.class}
+                InputProps={{
+                  disableUnderline: true,
+                }}
+              />
+            </DialogContent>
+            <DialogContent
+              dividers
+              style={
+                this.state.fileUrl.includes(".jpg")
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+            >
+              <img src={this.state.fileUrl} alt="new" />
+            </DialogContent>
+            <DialogContent
+              dividers
+              style={
+                this.state.fileUrl.includes(".pdf")
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+            >
+              {/* <Document file={this.state.fileUrl} /> */}
+              <PDFViewer document={{ url: `${this.state.fileUrl}` }} />
+            </DialogContent>
+            <DialogContent dividers>
+              <TextField
+                fullWidth
+                id="noteDetails"
+                name="description"
+                multiline
+                readonly
+                rows={6}
+                rowsMax={25}
+                value={this.state.description}
                 InputProps={{
                   disableUnderline: true,
                 }}

@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Account from "../components/account";
 import Note from "../components/note";
+import Search from "../components/search";
 
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -20,6 +21,7 @@ import NotesIcon from "@material-ui/icons/Notes";
 import Avatar from "@material-ui/core/avatar";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import SearchIcon from "@material-ui/icons/Search";
 
 import { authMiddleWare } from "../util/auth";
 
@@ -63,15 +65,19 @@ const styles = (theme) => ({
 
 class home extends Component {
   state = {
-    render: false,
+    render: 1,
   };
 
   loadAccountPage = (event) => {
-    this.setState({ render: true });
+    this.setState({ render: 2 });
   };
 
   loadNotePage = (event) => {
-    this.setState({ render: false });
+    this.setState({ render: 1 });
+  };
+
+  loadSearchPage = (event) => {
+    this.setState({ render: 3 });
   };
 
   logoutHandler = (event) => {
@@ -136,7 +142,7 @@ class home extends Component {
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
               <Typography variant="h6" noWrap>
-                NoteSharing App
+                Note Sharing
               </Typography>
             </Toolbar>
           </AppBar>
@@ -161,6 +167,14 @@ class home extends Component {
             </center>
             <Divider />
             <List>
+              <ListItem button key="Search" onClick={this.loadSearchPage}>
+                <ListItemIcon>
+                  {" "}
+                  <SearchIcon />{" "}
+                </ListItemIcon>
+                <ListItemText primary="Search" />
+              </ListItem>
+
               <ListItem button key="Note" onClick={this.loadNotePage}>
                 <ListItemIcon>
                   {" "}
@@ -187,7 +201,15 @@ class home extends Component {
             </List>
           </Drawer>
 
-          <div>{this.state.render ? <Account /> : <Note />}</div>
+          <div>
+            {this.state.render === 2 ? (
+              <Account />
+            ) : this.state.render === 3 ? (
+              <Search />
+            ) : (
+              <Note />
+            )}
+          </div>
         </div>
       );
     }

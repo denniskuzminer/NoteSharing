@@ -537,7 +537,11 @@ class note extends Component {
               }
             >
               {/* <Document file={this.state.fileUrl} /> */}
-              <PDFViewer document={{ url: `${this.state.fileUrl}` }} />
+              <PDFViewer
+                hideRotation
+                className={classes.css}
+                document={{ url: `${this.state.fileUrl}` }}
+              />
             </DialogContent>
             <DialogContent dividers>
               <TextField

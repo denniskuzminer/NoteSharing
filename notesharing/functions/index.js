@@ -8,6 +8,7 @@ const {
   deleteOneNote,
   editNote,
   getOneNote,
+  searchNotes,
 } = require("./APIs/notes");
 
 app.put("/note/:noteId", auth, editNote);
@@ -15,6 +16,7 @@ app.get("/note/:noteId", getOneNote);
 app.delete("/note/:noteId", auth, deleteOneNote);
 app.post("/note", auth, postOneNote);
 app.get("/notes", auth, getAllNotes);
+app.get("/notes/search", auth, searchNotes);
 
 const {
   loginUser,

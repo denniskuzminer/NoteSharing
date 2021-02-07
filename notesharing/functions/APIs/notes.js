@@ -4,11 +4,42 @@ const BusBoy = require("busboy");
 const path = require("path");
 const os = require("os");
 const fs = require("fs");
+const { ENODATA } = require("constants");
+const { CLIENT_RENEG_LIMIT } = require("tls");
 
 exports.getAllNotes = (request, response) => {
   db.collection("notes")
     .where("username", "==", request.user.username)
     .orderBy("createdAt", "desc")
+    .get()
+    .then((data) => {
+      let notes = [];
+      data.forEach((doc) => {
+        notes.push({
+          noteId: doc.id,
+          school: doc.data().school,
+          class: doc.data().class,
+          title: doc.data().title,
+          description: doc.data().description,
+          fileUrl: doc.data().fileUrl,
+          createdAt: doc.data().createdAt,
+        });
+      });
+      return response.json(notes);
+    })
+    .catch((err) => {
+      console.error(err);
+      return response.status(500).json({ error: err.code });
+    });
+};
+  
+exports.searchNotes = (request, response) => {
+  var searchString = request.query.string
+  db
+    .collection("notes")
+    .orderBy("title", "desc")
+    .where("search_cases", "array-contains-any", searchString.toUpperCase().split(" "))
+    .limit(10)
     .get()
     .then((data) => {
       let notes = [];
@@ -89,6 +120,20 @@ exports.postOneNote = async (request, response, next) => {
         newNoteItem.fileUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${fileName}?alt=media`;
         newNoteItem.createdAt = new Date().toISOString();
         newNoteItem.username = request.user.username; //add username
+        //add search cases
+        var Array = newNoteItem.title.toUpperCase().split(" ");
+        var SearchArray = [];
+        var k = 0;
+        for (i = 0; i < Array.length; i++)
+        {
+          for (j = 0; j < Array[i].length; j++)
+          {
+            SearchArray[k] = Array[i].substr(0, j+1);
+            k++;
+          }
+        }
+        newNoteItem.search_cases = SearchArray;
+        //
         return db
           .collection("notes")
           .add(newNoteItem)

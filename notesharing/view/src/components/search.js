@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import SearchBar from "material-ui-search-bar";
 import book from "./book.jpg";
+import axios from "axios";
+import { authMiddleWare } from "../util/auth";
 
 export default class search extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: "" };
+    this.state = {
+      value: "",
+      results: [],
+    };
   }
   render() {
     return (
@@ -45,12 +50,35 @@ export default class search extends Component {
               maxWidth: 4000,
               width: 800,
             }}
-            onChange={(newValue) => this.setState({ value: newValue })}
-            // onRequestSearch={() => doSomethingWith(this.state.value)}
-          />
+        onChange={(newValue) => {
+        console.log("value: " + newValue);
+        this.componentWillMount(newValue);
+        this.setState(this.state.notes)
+        }}
+      //  onRequestSearch={() => console.log("value" + this.state.value)} // doSomethingWith(finalQuery)
+        />
         </div>
       </main>
     );
+  }
+  //get searched notes
+  componentWillMount = (newValue) => {
+    console.log("VALUE: " + newValue)
+    authMiddleWare(this.props.history);
+    const authToken = localStorage.getItem("AuthToken");
+    axios.defaults.headers.common = { Authorization: `${authToken}` };
+    axios
+      .get("/notes/search?string=" + newValue)
+      .then((response) => {
+        this.setState({
+          uiLoading: false,
+          results: response.data
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      console.log("checkValue: " + this.state.results);
   }
 }
 /*

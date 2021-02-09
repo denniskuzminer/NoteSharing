@@ -1,18 +1,91 @@
 import React, { Component } from "react";
 import SearchBar from "material-ui-search-bar";
+import Dialog from "@material-ui/core/Dialog";
+import TextField from "@material-ui/core/TextField";
+import MuiDialogContent from "@material-ui/core/DialogContent";
 import book from "./book.jpg";
 import axios from "axios";
 import { authMiddleWare } from "../util/auth";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import { withStyles } from "@material-ui/core/styles";
+import PDFViewer from "pdf-viewer-reactjs";
 
-export default class search extends Component {
+const useStyles = (theme) => ({
+  root: {
+    // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    borderRadius: 3,
+    border: 0,
+    // color: "white",
+    height: 48,
+    // padding: "0 30px",
+    // boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    backgroundColor: theme.palette.background.paper,
+  },
+});
+
+class search extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: "",
       results: [],
+      open: false,
+      item: {
+        school: "",
+        class: "",
+        title: "",
+        description: "",
+        fileUrl: "",
+        noteId: "",
+      },
     };
   }
+
+  //get searched notes
+  componentWillMount = (newValue) => {
+    console.log("VALUE: " + newValue);
+    authMiddleWare(this.props.history);
+    const authToken = localStorage.getItem("AuthToken");
+    axios.defaults.headers.common = { Authorization: `${authToken}` };
+    axios
+      .get("/notes/search?string=" + newValue)
+      .then((response) => {
+        this.setState({
+          uiLoading: false,
+          results: response.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    console.log("checkValue: " + JSON.stringify(this.state.results));
+  };
+
+  // handleClickOpen = () => {
+  //   this.setState({ open: true });
+  // };
+
+  handleViewClose = () => {
+    this.setState({ open: false });
+  };
+
+  handleNoteSelect = (param) => {
+    this.setState({ item: param });
+    this.setState({ open: true });
+    console.log(this.state.item);
+    console.log(param);
+  };
+
   render() {
+    const { classes } = this.props;
+
+    const DialogContent = withStyles((theme) => ({
+      viewRoot: {
+        padding: theme.spacing(2),
+      },
+    }))(MuiDialogContent);
+
     return (
       <main>
         <div
@@ -49,38 +122,142 @@ export default class search extends Component {
               marginTop: "15px",
               maxWidth: 4000,
               width: 800,
+              marginBottom: 0,
             }}
-        onChange={(newValue) => {
-        console.log("value: " + newValue);
-        this.componentWillMount(newValue);
-        this.setState(this.state.notes)
-        }}
-      //  onRequestSearch={() => console.log("value" + this.state.value)} // doSomethingWith(finalQuery)
-        />
+            onChange={(newValue) => {
+              console.log("value: " + newValue);
+              this.componentWillMount(newValue);
+              this.setState(this.state.notes);
+            }}
+
+            //  onRequestSearch={() => console.log("value" + this.state.value)} // doSomethingWith(finalQuery)
+          />
+          <div
+            style={
+              this.state.results == ""
+                ? { display: "none" }
+                : { display: "block" }
+            }
+          >
+            <div
+              style={{
+                marginLeft: "220px",
+                marginRight: "220px",
+                maxWidth: 4000,
+                width: 800,
+                bottom: 400,
+                backgroundColor: "white",
+                borderRadius: "10px",
+              }}
+            >
+              <List>
+                {this.state.results.map((item) => (
+                  <ListItem
+                    button
+                    className={classes.root}
+                    onClick={this.handleNoteSelect.bind(this, item)}
+                  >
+                    {item.title}, {item.school}, {item.class},{" "}
+                    {item.description}
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          </div>
+          <Dialog
+            maxWidth
+            open={this.state.open}
+            onClose={this.handleViewClose.bind(this)}
+          >
+            <DialogContent>
+              <DialogContent dividers>
+                <TextField
+                  fullWidth
+                  id="noteDetails"
+                  name="school"
+                  multiline
+                  readonly
+                  rows={1}
+                  rowsMax={25}
+                  value={this.state.item ? this.state.item.school : null}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                />
+              </DialogContent>
+              <DialogContent dividers>
+                <TextField
+                  fullWidth
+                  id="noteDetails"
+                  name="class"
+                  multiline
+                  readonly
+                  rows={1}
+                  rowsMax={25}
+                  value={this.state.item ? this.state.item.class : null}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                />
+              </DialogContent>
+              <DialogContent
+                dividers
+                style={
+                  this.state.item
+                    ? this.state.item.fileUrl.includes(".jpg")
+                      ? { display: "block" }
+                      : { display: "none" }
+                    : null
+                }
+              >
+                <img
+                  src={this.state.item ? this.state.item.fileUrl : null}
+                  alt="new"
+                />
+              </DialogContent>
+              <DialogContent
+                dividers
+                style={
+                  this.state.item
+                    ? this.state.item.fileUrl.includes(".pdf")
+                      ? { display: "block" }
+                      : { display: "none" }
+                    : null
+                }
+              >
+                <PDFViewer
+                  hideRotation
+                  className={classes.css}
+                  document={
+                    this.state.item
+                      ? { url: `${this.state.item.fileUrl}` }
+                      : null
+                  }
+                />
+              </DialogContent>
+              <DialogContent dividers>
+                <TextField
+                  fullWidth
+                  id="noteDetails"
+                  name="description"
+                  multiline
+                  readonly
+                  rows={6}
+                  rowsMax={25}
+                  value={this.state.item ? this.state.item.description : null}
+                  InputProps={{
+                    disableUnderline: true,
+                  }}
+                />
+              </DialogContent>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
     );
   }
-  //get searched notes
-  componentWillMount = (newValue) => {
-    console.log("VALUE: " + newValue)
-    authMiddleWare(this.props.history);
-    const authToken = localStorage.getItem("AuthToken");
-    axios.defaults.headers.common = { Authorization: `${authToken}` };
-    axios
-      .get("/notes/search?string=" + newValue)
-      .then((response) => {
-        this.setState({
-          uiLoading: false,
-          results: response.data
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-      console.log("checkValue: " + this.state.results);
-  }
 }
+export default withStyles(useStyles)(search);
 /*
 fix form upload - pull up, upload file not shown, style the pdf viewer
 */

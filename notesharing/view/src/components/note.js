@@ -243,7 +243,7 @@ class note extends Component {
       event.preventDefault();
       let form_data = new FormData();
       form_data.append("school", this.state.school);
-      form_data.append("class", this.state.school);
+      form_data.append("class", this.state.class);
       form_data.append("title", this.state.title);
       form_data.append("description", this.state.description);
       form_data.append("noteFile", this.state.file);

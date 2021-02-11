@@ -8,19 +8,28 @@ import axios from "axios";
 import { authMiddleWare } from "../util/auth";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
-import PDFViewer from "pdf-viewer-reactjs";
+import Slide from "@material-ui/core/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = (theme) => ({
   root: {
-    // background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     borderRadius: 3,
     border: 0,
-    // color: "white",
     height: 48,
-    // padding: "0 30px",
-    // boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
     backgroundColor: theme.palette.background.paper,
+  },
+  dialog: { marginTop: "14px" },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
   },
 });
 
@@ -42,7 +51,6 @@ class search extends Component {
     };
   }
 
-  //get searched notes
   componentWillMount = (newValue) => {
     console.log("VALUE: " + newValue);
     authMiddleWare(this.props.history);
@@ -129,8 +137,6 @@ class search extends Component {
               this.componentWillMount(newValue);
               this.setState(this.state.notes);
             }}
-
-            //  onRequestSearch={() => console.log("value" + this.state.value)} // doSomethingWith(finalQuery)
           />
           <div
             style={
@@ -165,98 +171,139 @@ class search extends Component {
             </div>
           </div>
           <Dialog
-            maxWidth
+            TransitionComponent={Transition}
+            className={classes.dialog}
+            maxWidth={"lg"}
+            fullWidth={true}
             open={this.state.open}
             onClose={this.handleViewClose.bind(this)}
           >
+            <IconButton
+              className={classes.closeButton}
+              edge="start"
+              color="inherit"
+              onClick={this.handleViewClose.bind(this)}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
             <DialogContent>
-              <DialogContent dividers>
-                <TextField
-                  fullWidth
-                  id="noteDetails"
-                  name="school"
-                  multiline
-                  readonly
-                  rows={1}
-                  rowsMax={25}
-                  value={this.state.item ? this.state.item.school : null}
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                />
-              </DialogContent>
-              <DialogContent dividers>
-                <TextField
-                  fullWidth
-                  id="noteDetails"
-                  name="class"
-                  multiline
-                  readonly
-                  rows={1}
-                  rowsMax={25}
-                  value={this.state.item ? this.state.item.class : null}
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                />
-              </DialogContent>
-              <DialogContent
-                dividers
-                style={
-                  this.state.item
-                    ? this.state.item.fileUrl.includes(".jpg")
-                      ? { display: "block" }
-                      : { display: "none" }
-                    : null
-                }
-              >
-                <img
-                  src={this.state.item ? this.state.item.fileUrl : null}
-                  alt="new"
-                />
-              </DialogContent>
-              <DialogContent
-                dividers
-                style={
-                  this.state.item
-                    ? this.state.item.fileUrl.includes(".png")
-                      ? { display: "block" }
-                      : { display: "none" }
-                    : null
-                }
-              >
-                <img
-                  src={this.state.item ? this.state.item.fileUrl : null}
-                  alt="new"
-                />
-              </DialogContent>
-              <DialogContent
-                dividers
-                style={
-                  this.state.item
-                    ? this.state.item.fileUrl.includes(".pdf")
-                      ? { display: "block" }
-                      : { display: "none" }
-                    : null
-                }
-              >
-              <iframe className={'pdf'} width="100%" height="300" frameborder="0" src={`https://docs.google.com/gview?url=${`${this.state.item.fileUrl}`}&embedded=true`}></iframe>
-              </DialogContent>
-              <DialogContent dividers>
-                <TextField
-                  fullWidth
-                  id="noteDetails"
-                  name="description"
-                  multiline
-                  readonly
-                  rows={6}
-                  rowsMax={25}
-                  value={this.state.item ? this.state.item.description : null}
-                  InputProps={{
-                    disableUnderline: true,
-                  }}
-                />
-              </DialogContent>
+              <div style={{ float: "left" }}>
+                <DialogContent dividers>
+                  <TextField
+                    // fullWidth
+                    id="noteDetails"
+                    name="title"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.item ? this.state.item.title : null}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent dividers>
+                  <TextField
+                    // fullWidth
+                    id="noteDetails"
+                    name="school"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.item ? this.state.item.school : null}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent dividers>
+                  <TextField
+                    fullWidth
+                    id="noteDetails"
+                    name="class"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.item ? this.state.item.class : null}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent>
+                  <TextField
+                    fullWidth
+                    id="noteDetails"
+                    name="description"
+                    multiline
+                    readonly
+                    // rows={20.8}
+                    rowsMax={25}
+                    value={this.state.item ? this.state.item.description : null}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+              </div>
+              <div style={{ float: "right" }}>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.item
+                      ? this.state.item.fileUrl.includes(".jpg")
+                        ? { display: "block" }
+                        : { display: "none" }
+                      : null
+                  }
+                >
+                  <img
+                    width="940px"
+                    height="600px"
+                    src={this.state.item ? this.state.item.fileUrl : null}
+                    alt="new"
+                  />
+                </DialogContent>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.item
+                      ? this.state.item.fileUrl.includes(".png")
+                        ? { display: "block" }
+                        : { display: "none" }
+                      : null
+                  }
+                >
+                  <img
+                    width="940px"
+                    height="600px"
+                    src={this.state.item ? this.state.item.fileUrl : null}
+                    alt="new"
+                  />
+                </DialogContent>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.item
+                      ? this.state.item.fileUrl.includes(".pdf")
+                        ? { display: "block" }
+                        : { display: "none" }
+                      : null
+                  }
+                >
+                  <iframe
+                    className={"pdf"}
+                    width="940px"
+                    height="600px"
+                    frameborder="0"
+                    src={`https://docs.google.com/gview?url=${`${this.state.item.fileUrl}`}&embedded=true`}
+                  ></iframe>
+                </DialogContent>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -265,6 +312,3 @@ class search extends Component {
   }
 }
 export default withStyles(useStyles)(search);
-/*
-fix form upload - pull up, upload file not shown, style the pdf viewer
-*/

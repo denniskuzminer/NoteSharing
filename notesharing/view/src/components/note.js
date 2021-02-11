@@ -15,6 +15,7 @@ import CardContent from "@material-ui/core/CardContent";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import Input from "@material-ui/core/Input";
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -60,7 +61,7 @@ const styles = (theme) => ({
     borderRadius: "8px",
     position: "inherit",
   },
-  grid:{
+  grid: {
     maxWidth: "82.45%",
     marginLeft: theme.spacing(0.25),
     padding: theme.spacing(2),
@@ -95,9 +96,7 @@ const styles = (theme) => ({
     left: "50%",
     top: "35%",
   },
-  dialogeStyle: {
-    maxWidth: "50%",
-  },
+  dialogeStyle: { marginTop: "14px" },
   viewRoot: {
     margin: 0,
     padding: theme.spacing(2),
@@ -127,6 +126,7 @@ class note extends Component {
       uiLoading: true,
       buttonType: "",
       viewOpen: false,
+      fileUploaded: false,
     };
 
     this.deleteNoteHandler = this.deleteNoteHandler.bind(this);
@@ -143,6 +143,7 @@ class note extends Component {
   handleFileChange = (event) => {
     this.setState({
       file: event.target.files[0],
+      fileUploaded: true,
     });
   };
 
@@ -322,11 +323,10 @@ class note extends Component {
           </IconButton>
           <Dialog
             maxWidth
-            // fullScreen
             className={classes.noteChange}
             open={open}
             onClose={handleClose}
-            TransitionComponent={Transition}
+            // TransitionComponent={Transition}
           >
             <AppBar className={classes.noteChangeTitle}>
               <Toolbar>
@@ -341,7 +341,7 @@ class note extends Component {
                 <Typography variant="h6" className={classes.title}>
                   {this.state.buttonType === "Edit"
                     ? "Edit Note"
-                    : "Create a new Note"}
+                    : "Create a new note"}
                 </Typography>
                 <Button
                   autoFocus
@@ -362,7 +362,7 @@ class note extends Component {
                     required
                     fullWidth
                     id="noteTitle"
-                    label="Note Title"
+                    label="Title"
                     name="title"
                     autoComplete="noteTitle"
                     helperText={errors.title}
@@ -410,12 +410,23 @@ class note extends Component {
                     component="label"
                   >
                     Upload File
-                    <input
+                    <Input
                       type="file"
                       style={{ display: "none" }}
                       onChange={this.handleFileChange}
                     />
                   </Button>
+                  <div
+                    style={{
+                      float: "right",
+                      marginTop: "8px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    {this.state.fileUploaded
+                      ? `File chosen: ${this.state.file.name}`
+                      : null}
+                  </div>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -423,7 +434,7 @@ class note extends Component {
                     required
                     fullWidth
                     id="noteDescription"
-                    label="Note Description"
+                    label="Description"
                     name="description"
                     autoComplete="noteDescription"
                     multiline
@@ -484,89 +495,134 @@ class note extends Component {
           </Grid>
           <Dialog
             onClose={handleViewClose}
-            aria-labelledby="customized-dialog-title"
+            maxWidth={"lg"}
+            fullWidth={true}
             open={viewOpen}
-            fullWidth
-            //fullScreen
             classes={{ paperFullWidth: classes.dialogeStyle }}
+            TransitionComponent={Transition}
           >
-            <DialogTitle id="customized-dialog-title" onClose={handleViewClose}>
-              {this.state.title}
-            </DialogTitle>
-            <DialogContent dividers>
-              <TextField
-                fullWidth
-                id="noteDetails"
-                name="school"
-                multiline
-                readonly
-                rows={1}
-                rowsMax={25}
-                value={this.state.school}
-                InputProps={{
-                  disableUnderline: true,
-                }}
-              />
-            </DialogContent>
-            <DialogContent dividers>
-              <TextField
-                fullWidth
-                id="noteDetails"
-                name="class"
-                multiline
-                readonly
-                rows={1}
-                rowsMax={25}
-                value={this.state.class}
-                InputProps={{
-                  disableUnderline: true,
-                }}
-              />
-            </DialogContent>
-            <DialogContent
-              dividers
-              style={
-                this.state.fileUrl.includes(".jpg")
-                  ? { display: "block" }
-                  : { display: "none" }
-              }
-            >
-              <img src={this.state.fileUrl} alt="new" />
-            </DialogContent>
-            <DialogContent
-              dividers
-              style={
-                this.state.fileUrl.includes(".png")
-                  ? { display: "block" }
-                  : { display: "none" }
-              }
-            >
-              <img src={this.state.fileUrl} alt="new" />
-            </DialogContent>
-            <DialogContent
-              dividers
-              style={
-                this.state.fileUrl.includes(".pdf")
-                  ? { display: "block" }
-                  : { display: "none" }
-              }
-            >
-            <iframe className={'pdf'} width="100%" height="300" frameborder="0" src={`https://docs.google.com/gview?url=${`${this.state.fileUrl}`}&embedded=true`}></iframe>
-            </DialogContent>
-            <DialogContent dividers>
-              <TextField
-                fullWidth
-                id="noteDetails"
-                name="description"
-                multiline
-                readonly
-                rows={6}
-                rowsMax={25}
-                value={this.state.description}
-                InputProps={{
-                  disableUnderline: true,
-                }}
-              />
+            <DialogContent>
+              <IconButton
+                className={classes.closeButton}
+                edge="start"
+                color="inherit"
+                onClick={handleViewClose}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+
+              <div style={{ float: "left" }}>
+                <DialogContent dividers>
+                  <TextField
+                    // fullWidth
+                    id="noteDetails"
+                    name="title"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.title}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent dividers>
+                  <TextField
+                    fullWidth
+                    id="noteDetails"
+                    name="school"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.school}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent dividers>
+                  <TextField
+                    fullWidth
+                    id="noteDetails"
+                    name="class"
+                    multiline
+                    readonly
+                    rows={1}
+                    rowsMax={25}
+                    value={this.state.class}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+                <DialogContent>
+                  <TextField
+                    fullWidth
+                    id="noteDetails"
+                    name="description"
+                    multiline
+                    readonly
+                    // rows={20.8}
+                    rowsMax={25}
+                    value={this.state.description}
+                    InputProps={{
+                      disableUnderline: true,
+                    }}
+                  />
+                </DialogContent>
+              </div>
+
+              <div style={{ float: "right" }}>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.fileUrl.includes(".jpg")
+                      ? { display: "block" }
+                      : { display: "none" }
+                  }
+                >
+                  <img
+                    width="940px"
+                    height="600px"
+                    src={this.state.fileUrl}
+                    alt="new"
+                  />
+                </DialogContent>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.fileUrl.includes(".png")
+                      ? { display: "block" }
+                      : { display: "none" }
+                  }
+                >
+                  <img
+                    width="940px"
+                    height="600px"
+                    src={this.state.fileUrl}
+                    alt="new"
+                  />
+                </DialogContent>
+                <DialogContent
+                  dividers
+                  style={
+                    this.state.fileUrl.includes(".pdf")
+                      ? { display: "block" }
+                      : { display: "none" }
+                  }
+                >
+                  <iframe
+                    className={"pdf"}
+                    width="940px"
+                    height="600px"
+                    frameborder="0"
+                    src={`https://docs.google.com/gview?url=${`${this.state.fileUrl}`}&embedded=true`}
+                  ></iframe>
+                </DialogContent>
+              </div>
             </DialogContent>
           </Dialog>
         </main>

@@ -178,12 +178,12 @@ class home extends Component {
                 <ListItemText primary="Search" />
               </ListItem>
 
-              <ListItem button key="Note" onClick={this.loadNotePage}>
+              <ListItem button key="Notes" onClick={this.loadNotePage}>
                 <ListItemIcon>
                   {" "}
                   <NotesIcon />{" "}
                 </ListItemIcon>
-                <ListItemText primary="Note" />
+                <ListItemText primary="Notes" />
               </ListItem>
 
               <ListItem button key="Account" onClick={this.loadAccountPage}>

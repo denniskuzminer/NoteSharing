@@ -63,7 +63,7 @@ const styles = (theme) => ({
     marginTop: 10,
   },
   submitButton: {
-    marginTop: "10px",
+    marginTop: "20px",
   },
 });
 
@@ -203,7 +203,7 @@ class account extends Component {
       return (
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Card {...rest} className={clsx(classes.root, classes)}>
+          <Card variant="outlined" {...rest} className={clsx(classes.root, classes)}>
             <CardContent>
               <div className={classes.details}>
                 <div>
@@ -224,9 +224,8 @@ class account extends Component {
                     onClick={this.profilePictureHandler}
                   >
                     Upload Photo
-                  </Button>
+                  </Button >
                   <input type="file" onChange={this.handleImageChange} />
-
                   {this.state.imageError ? (
                     <div className={classes.customError}>
                       {" "}
@@ -239,14 +238,11 @@ class account extends Component {
               </div>
               <div className={classes.progress} />
             </CardContent>
-            <Divider />
           </Card>
-
           <br />
-          <Card {...rest} className={clsx(classes.root, classes)}>
+          <Card variant="outlined" {...rest} className={clsx(classes.root, classes)}>
             <form autoComplete="off" noValidate>
-              <Divider />
-              <CardContent>
+              <CardContent >
                 <Grid container spacing={3}>
                   <Grid item md={6} xs={12}>
                     <TextField
@@ -319,7 +315,6 @@ class account extends Component {
                   </Grid>
                 </Grid>
               </CardContent>
-              <Divider />
               <CardActions />
             </form>
           </Card>

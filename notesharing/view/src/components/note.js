@@ -21,12 +21,10 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { authMiddleWare } from "../util/auth";
 
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-
-import PDFViewer from "pdf-viewer-reactjs";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -58,7 +56,15 @@ const styles = (theme) => ({
   },
   toolbar: theme.mixins.toolbar,
   root: {
-    minWidth: 470,
+    minWidth: 220,
+    borderRadius: "8px",
+    position: "inherit",
+  },
+  grid:{
+    maxWidth: "82.45%",
+    marginLeft: theme.spacing(0.25),
+    padding: theme.spacing(2),
+    position: "absolute",
   },
   noteChange: {
     top: "94px",
@@ -433,7 +439,7 @@ class note extends Component {
             </form>
           </Dialog>
 
-          <Grid container spacing={2}>
+          <Grid container spacing={2} className={classes.grid}>
             {this.state.notes.map((note) => (
               <Grid item xs={12} sm={6}>
                 <Card className={classes.root} variant="outlined">
@@ -476,7 +482,6 @@ class note extends Component {
               </Grid>
             ))}
           </Grid>
-
           <Dialog
             onClose={handleViewClose}
             aria-labelledby="customized-dialog-title"
@@ -531,17 +536,22 @@ class note extends Component {
             <DialogContent
               dividers
               style={
+                this.state.fileUrl.includes(".png")
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+            >
+              <img src={this.state.fileUrl} alt="new" />
+            </DialogContent>
+            <DialogContent
+              dividers
+              style={
                 this.state.fileUrl.includes(".pdf")
                   ? { display: "block" }
                   : { display: "none" }
               }
             >
-              {/* <Document file={this.state.fileUrl} /> */}
-              <PDFViewer
-                hideRotation
-                className={classes.css}
-                document={{ url: `${this.state.fileUrl}` }}
-              />
+            <iframe className={'pdf'} width="100%" height="300" frameborder="0" src={`https://docs.google.com/gview?url=${`${this.state.fileUrl}`}&embedded=true`}></iframe>
             </DialogContent>
             <DialogContent dividers>
               <TextField

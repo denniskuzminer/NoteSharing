@@ -25,11 +25,12 @@ import SearchIcon from "@material-ui/icons/Search";
 
 import { authMiddleWare } from "../util/auth";
 
-const drawerWidth = 240;
+const drawerWidth = 265;
 
 const styles = (theme) => ({
   root: {
     display: "flex",
+    borderRadius: "8px",
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -46,11 +47,12 @@ const styles = (theme) => ({
     padding: theme.spacing(3),
   },
   avatar: {
-    height: 110,
-    width: 100,
+    height: 145,
+    width: 145,
     flexShrink: 0,
     flexGrow: 0,
-    marginTop: 20,
+    marginTop: theme.spacing(2),
+    borderRadius: "8px",
   },
   uiProgess: {
     position: "fixed",
@@ -159,6 +161,7 @@ class home extends Component {
               <Avatar
                 src={this.state.profilePicture}
                 className={classes.avatar}
+                variant="rounded"
               />
               <p>
                 {" "}

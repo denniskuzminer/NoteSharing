@@ -96,7 +96,6 @@ class search extends Component {
             backgroundRepeat: "no-repeat",
             backgroundSize: "auto",
             backgroundImage: `url(${book})`,
-            borderRadius: "5px",
           }}
         >
           <div
@@ -123,6 +122,7 @@ class search extends Component {
               maxWidth: 4000,
               width: 800,
               marginBottom: 0,
+              borderRadius: "8px",
             }}
             onChange={(newValue) => {
               console.log("value: " + newValue);
@@ -141,13 +141,14 @@ class search extends Component {
           >
             <div
               style={{
+                marginTop: "15px",
                 marginLeft: "220px",
                 marginRight: "220px",
                 maxWidth: 4000,
                 width: 800,
                 bottom: 400,
                 backgroundColor: "white",
-                borderRadius: "10px",
+                borderRadius: "8px",
               }}
             >
               <List>
@@ -157,8 +158,7 @@ class search extends Component {
                     className={classes.root}
                     onClick={this.handleNoteSelect.bind(this, item)}
                   >
-                    {item.title}, {item.school}, {item.class},{" "}
-                    {item.description}
+                    {item.title}, {item.school}, {item.class}
                   </ListItem>
                 ))}
               </List>
@@ -219,21 +219,28 @@ class search extends Component {
                 dividers
                 style={
                   this.state.item
+                    ? this.state.item.fileUrl.includes(".png")
+                      ? { display: "block" }
+                      : { display: "none" }
+                    : null
+                }
+              >
+                <img
+                  src={this.state.item ? this.state.item.fileUrl : null}
+                  alt="new"
+                />
+              </DialogContent>
+              <DialogContent
+                dividers
+                style={
+                  this.state.item
                     ? this.state.item.fileUrl.includes(".pdf")
                       ? { display: "block" }
                       : { display: "none" }
                     : null
                 }
               >
-                <PDFViewer
-                  hideRotation
-                  className={classes.css}
-                  document={
-                    this.state.item
-                      ? { url: `${this.state.item.fileUrl}` }
-                      : null
-                  }
-                />
+              <iframe className={'pdf'} width="100%" height="300" frameborder="0" src={`https://docs.google.com/gview?url=${`${this.state.item.fileUrl}`}&embedded=true`}></iframe>
               </DialogContent>
               <DialogContent dividers>
                 <TextField

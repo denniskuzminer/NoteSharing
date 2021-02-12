@@ -17,6 +17,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+function getSortOrder(prop) {
+  return function (a, b) {
+    if (a[prop] > b[prop]) {
+      return 1;
+    } else if (a[prop] < b[prop]) {
+      return -1;
+    }
+    return 0;
+  };
+}
+
 const useStyles = (theme) => ({
   root: {
     borderRadius: 3,
@@ -59,20 +70,21 @@ class search extends Component {
     axios
       .get("/notes/search?string=" + newValue)
       .then((response) => {
+        response.data.sort(getSortOrder("title"));
         this.setState({
           uiLoading: false,
           results: response.data,
         });
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 403) {
+          this.props.history.push("/login");
+        } else {
+          console.log(err);
+        }
       });
     console.log("checkValue: " + JSON.stringify(this.state.results));
   };
-
-  // handleClickOpen = () => {
-  //   this.setState({ open: true });
-  // };
 
   handleViewClose = () => {
     this.setState({ open: false });

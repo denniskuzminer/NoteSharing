@@ -16,6 +16,8 @@ import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Input from "@material-ui/core/Input";
+import { Alert, AlertTitle } from "@material-ui/lab";
+import Collapse from "@material-ui/core/Collapse";
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -107,6 +109,11 @@ const styles = (theme) => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
+  alert: {
+    width: "400px",
+    bottom: "8px ",
+    right: "16px ",
+  },
 });
 
 class note extends Component {
@@ -127,6 +134,8 @@ class note extends Component {
       buttonType: "",
       viewOpen: false,
       fileUploaded: false,
+      empty: false,
+      openEmptyField: false,
     };
 
     this.deleteNoteHandler = this.deleteNoteHandler.bind(this);
@@ -255,6 +264,15 @@ class note extends Component {
       form_data.append("description", this.state.description);
       form_data.append("noteFile", this.state.file);
       let options = {};
+      if (
+        !this.state.school ||
+        !this.state.class ||
+        !this.state.title ||
+        !this.state.description
+      ) {
+        this.setState({ empty: true, openEmptyField: true });
+        return;
+      }
       if (this.state.buttonType === "Edit") {
         options = {
           url: `/note/${this.state.noteId}`,
@@ -285,9 +303,6 @@ class note extends Component {
               imageError: "Error in posting the data",
             });
           }
-
-          //   this.setState({ open: true, errors: error.response.data });
-          //   console.log(error);
         });
     };
 
@@ -297,6 +312,12 @@ class note extends Component {
 
     const handleClose = (event) => {
       this.setState({ open: false });
+      this.setState({ fileUploaded: false });
+      handleEmptyField(event);
+    };
+
+    const handleEmptyField = (event) => {
+      this.setState({ openEmptyField: false });
     };
 
     if (this.state.uiLoading === true) {
@@ -625,6 +646,33 @@ class note extends Component {
               </div>
             </DialogContent>
           </Dialog>
+          <div
+            onClose={handleEmptyField}
+            open={this.state.openEmptyField}
+            style={
+              this.state.openEmptyField
+                ? {
+                    display: "block",
+                    position: "relative",
+                    zIndex: 9999,
+                    marginTop: "580px",
+                    marginLeft: "830px",
+                  }
+                : { display: "none" }
+            }
+          >
+            <Collapse in={this.state.openEmptyField}>
+              <Alert
+                className={classes.alert}
+                severity="error"
+                open={this.state.openEmptyField}
+                onClose={handleEmptyField}
+              >
+                <AlertTitle>Error</AlertTitle>
+                Please make sure that you have filled out all text fields
+              </Alert>
+            </Collapse>
+          </div>
         </main>
       );
     }

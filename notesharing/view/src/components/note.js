@@ -28,6 +28,7 @@ import React, { Component, useState } from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
+import { Divider } from "@material-ui/core";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -514,6 +515,7 @@ class note extends Component {
               </Grid>
             ))}
           </Grid>
+          <div>
           <Dialog
             onClose={handleViewClose}
             maxWidth={"lg"}
@@ -532,120 +534,125 @@ class note extends Component {
               >
                 <CloseIcon />
               </IconButton>
-
-              <div style={{ float: "left" }}>
-                <DialogContent dividers>
-                  <TextField
-                    // fullWidth
-                    id="noteDetails"
-                    name="title"
-                    multiline
-                    readonly
-                    rows={1}
-                    rowsMax={25}
-                    value={this.state.title}
-                    InputProps={{
-                      disableUnderline: true,
-                    }}
-                  />
-                </DialogContent>
-                <DialogContent dividers>
-                  <TextField
-                    fullWidth
-                    id="noteDetails"
-                    name="school"
-                    multiline
-                    readonly
-                    rows={1}
-                    rowsMax={25}
-                    value={this.state.school}
-                    InputProps={{
-                      disableUnderline: true,
-                    }}
-                  />
-                </DialogContent>
-                <DialogContent dividers>
-                  <TextField
-                    fullWidth
-                    id="noteDetails"
-                    name="class"
-                    multiline
-                    readonly
-                    rows={1}
-                    rowsMax={25}
-                    value={this.state.class}
-                    InputProps={{
-                      disableUnderline: true,
-                    }}
-                  />
-                </DialogContent>
-                <DialogContent>
-                  <TextField
-                    fullWidth
-                    id="noteDetails"
-                    name="description"
-                    multiline
-                    readonly
-                    // rows={20.8}
-                    rowsMax={25}
-                    value={this.state.description}
-                    InputProps={{
-                      disableUnderline: true,
-                    }}
-                  />
-                </DialogContent>
-              </div>
-
-              <div style={{ float: "right" }}>
-                <DialogContent
-                  dividers
-                  style={
-                    this.state.fileUrl.includes(".jpg")
-                      ? { display: "block" }
-                      : { display: "none" }
-                  }
-                >
-                  <img
-                    width="940px"
-                    height="600px"
-                    src={this.state.fileUrl}
-                    alt="new"
-                  />
-                </DialogContent>
-                <DialogContent
-                  dividers
-                  style={
-                    this.state.fileUrl.includes(".png")
-                      ? { display: "block" }
-                      : { display: "none" }
-                  }
-                >
-                  <img
-                    width="940px"
-                    height="600px"
-                    src={this.state.fileUrl}
-                    alt="new"
-                  />
-                </DialogContent>
-                <DialogContent
-                  dividers
-                  style={
-                    this.state.fileUrl.includes(".pdf")
-                      ? { display: "block" }
-                      : { display: "none" }
-                  }
-                >
-                  <iframe
-                    className={"pdf"}
-                    width="940px"
-                    height="600px"
-                    frameborder="0"
-                    src={`https://docs.google.com/gview?url=${`${this.state.fileUrl}`}&embedded=true`}
-                  ></iframe>
-                </DialogContent>
-              </div>
+              <Grid item xs container spacing={1} direction="row">  
+                <Grid item xs>
+                <div style={{ float: "left" }}>
+                  <DialogContent>
+                    <TextField
+                      // fullWidth
+                      id="noteDetails"
+                      name="title"
+                      multiline
+                      readonly
+                      rows={1}
+                      rowsMax={25}
+                      value={this.state.title}
+                      InputProps={{
+                        disableUnderline: true,
+                      }}
+                    />
+                    <Divider></Divider>
+                  </DialogContent>
+                  <DialogContent>
+                    <TextField
+                      fullWidth
+                      id="noteDetails"
+                      name="school"
+                      multiline
+                      readonly
+                      rows={1}
+                      rowsMax={25}
+                      value={this.state.school}
+                      InputProps={{
+                        disableUnderline: true,
+                      }}
+                    />
+                    <Divider></Divider>
+                  </DialogContent>
+                  <DialogContent>
+                    <TextField
+                      fullWidth
+                      id="noteDetails"
+                      name="class"
+                      multiline
+                      readonly
+                      rows={1}
+                      rowsMax={25}
+                      value={this.state.class}
+                      InputProps={{
+                        disableUnderline: true,
+                      }}
+                    />
+                    <Divider></Divider>
+                  </DialogContent>
+                  <DialogContent>
+                    <TextField
+                      fullWidth
+                      id="noteDetails"
+                      name="description"
+                      multiline
+                      readonly
+                      // rows={20.8}
+                      rowsMax={25}
+                      value={this.state.description}
+                      InputProps={{
+                        disableUnderline: true,
+                      }}
+                    />
+                  </DialogContent>
+                </div>
+                </Grid>
+                <Grid item xs>
+                <div style={{ float: "right" }}>
+                  <DialogContent
+                    style={
+                      this.state.fileUrl.includes(".jpg")
+                        ? { display: "block" }
+                        : { display: "none" }
+                    }
+                  >
+                    <img
+                      width="940px"
+                      height="600px"
+                      src={this.state.fileUrl}
+                      alt="new"
+                    />
+                  </DialogContent>
+                  <DialogContent
+                    style={
+                      this.state.fileUrl.includes(".png")
+                        ? { display: "block" }
+                        : { display: "none" }
+                    }
+                  >
+                    <img
+                      width="940px"
+                      height="600px"
+                      src={this.state.fileUrl}
+                      alt="new"
+                    />
+                  </DialogContent>
+                  <DialogContent
+                    style={
+                      this.state.fileUrl.includes(".pdf")
+                        ? { display: "block" }
+                        : { display: "none" }
+                    }
+                  >
+                    <iframe
+                      className={"pdf"}
+                      width="940px"
+                      height="600px"
+                      frameborder="0"
+                      src={`https://docs.google.com/gview?url=${`${this.state.fileUrl}`}&embedded=true`}
+                    ></iframe>
+                  </DialogContent>
+                </div>
+                </Grid>
+              </Grid>
             </DialogContent>
           </Dialog>
+          </div>
           <div
             onClose={handleEmptyField}
             open={this.state.openEmptyField}

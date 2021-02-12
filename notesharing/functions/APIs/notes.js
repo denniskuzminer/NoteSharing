@@ -122,6 +122,8 @@ exports.postOneNote = async (request, response, next) => {
         newNoteItem.username = request.user.username; //add username
         //add search cases
         var Array = newNoteItem.title.toUpperCase().split(" ");
+        var ArrayClass = newNoteItem.class.toUpperCase().split(" ");
+        var ArraySchool = newNoteItem.school.toUpperCase().split(" ");
         var SearchArray = [];
         var k = 0;
         for (i = 0; i < Array.length; i++)
@@ -129,6 +131,22 @@ exports.postOneNote = async (request, response, next) => {
           for (j = 0; j < Array[i].length; j++)
           {
             SearchArray[k] = Array[i].substr(0, j+1);
+            k++;
+          }
+        }
+        for (i = 0; i < ArrayClass.length; i++)
+        {
+          for (j = 0; j < ArrayClass[i].length; j++)
+          {
+            SearchArray[k] = ArrayClass[i].substr(0, j+1);
+            k++;
+          }
+        }
+        for (i = 0; i < ArraySchool.length; i++)
+        {
+          for (j = 0; j < ArraySchool[i].length; j++)
+          {
+            SearchArray[k] = ArraySchool[i].substr(0, j+1);
             k++;
           }
         }

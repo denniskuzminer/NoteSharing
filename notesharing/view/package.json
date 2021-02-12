@@ -2,7 +2,7 @@
   "name": "view",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000/notesharing-2d280/us-central1/api",
+  "proxy": "https://us-central1-notesharing-2d280.cloudfunctions.net/api",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
@@ -16,6 +16,7 @@
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",
+    "http-proxy-middleware": "^1.0.6",
     "material-ui-search-bar": "^1.0.0",
     "mui-autocomplete": "^2.0.1",
     "pdf-viewer-reactjs": "^2.2.0",

@@ -10,7 +10,7 @@ ReactDOM.render(
   <ThemeProvider theme={theme}>
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
   </ThemeProvider>,
   document.getElementById('root')
 );

@@ -182,7 +182,7 @@ class note extends Component {
     axios
       .delete(noteId)
       .then(() => {
-        console.log(noteId);
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);

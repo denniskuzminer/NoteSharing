@@ -104,7 +104,7 @@ class home extends Component {
     const authToken = localStorage.getItem("AuthToken");
     axios.defaults.headers.common = { Authorization: `${authToken}` };
     axios
-      .get("/user")
+      .get("https://us-central1-notesharing-2d280.cloudfunctions.net/api/user")
       .then((response) => {
         console.log(response.data);
         this.setState({

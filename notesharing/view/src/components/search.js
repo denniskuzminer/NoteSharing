@@ -70,7 +70,7 @@ class search extends Component {
     const authToken = localStorage.getItem("AuthToken");
     axios.defaults.headers.common = { Authorization: `${authToken}` };
     axios
-      .get("/notes/search?string=" + newValue)
+      .get("https://us-central1-notesharing-2d280.cloudfunctions.net/api/notes/search?string=" + newValue)
       .then((response) => {
         response.data.sort(getSortOrder("title"));
         this.setState({

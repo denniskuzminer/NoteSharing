@@ -77,7 +77,7 @@ class login extends Component {
       password: this.state.password,
     };
     axios
-      .post("/login", userData)
+      .post("https://us-central1-notesharing-2d280.cloudfunctions.net/api/login", userData)
       .then((response) => {
         localStorage.setItem("AuthToken", `Bearer ${response.data.token}`);
         this.setState({

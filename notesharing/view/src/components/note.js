@@ -162,7 +162,7 @@ class note extends Component {
     const authToken = localStorage.getItem("AuthToken");
     axios.defaults.headers.common = { Authorization: `${authToken}` };
     axios
-      .get("/notes")
+      .get("https://us-central1-notesharing-2d280.cloudfunctions.net/api/notes")
       .then((response) => {
         this.setState({
           notes: response.data,
@@ -178,11 +178,11 @@ class note extends Component {
     authMiddleWare(this.props.history);
     const authToken = localStorage.getItem("AuthToken");
     axios.defaults.headers.common = { Authorization: `${authToken}` };
-    let noteId = data.note.noteId;
+    let noteId = "https://us-central1-notesharing-2d280.cloudfunctions.net/api/note/" + data.note.noteId;
     axios
-      .delete(`note/${noteId}`)
+      .delete(noteId)
       .then(() => {
-        window.location.reload();
+        console.log(noteId);
       })
       .catch((err) => {
         console.log(err);
@@ -276,13 +276,13 @@ class note extends Component {
       }
       if (this.state.buttonType === "Edit") {
         options = {
-          url: `/note/${this.state.noteId}`,
+          url: `https://us-central1-notesharing-2d280.cloudfunctions.net/api/note/${this.state.noteId}`,
           method: "put",
           data: form_data,
         };
       } else {
         options = {
-          url: "/note",
+          url: "https://us-central1-notesharing-2d280.cloudfunctions.net/api/note",
           method: "post",
           data: form_data,
         };

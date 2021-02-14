@@ -7,29 +7,24 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
-    "@phuocng/react-pdf-viewer": "^1.7.0",
-    "@react-pdf-viewer/core": "^2.3.2",
-    "@react-pdf/renderer": "^1.6.13",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.0",
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
+    "cors": "^2.8.5",
     "dayjs": "^1.10.4",
     "http-proxy-middleware": "^1.0.6",
     "material-ui-search-bar": "^1.0.0",
     "mui-autocomplete": "^2.0.1",
-    "pdf-viewer-reactjs": "^2.2.0",
-    "pdf-viewer-reactjs-bulma-wrapped": "^0.2.3",
-    "pdfjs-dist": "^2.6.347",
     "precise-ui": "^1.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-file-viewer": "^1.2.1",
     "react-pdf": "^5.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-search-field": "^1.2.0",
+    "serve-handler": "^6.1.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -56,5 +51,8 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "main": "index.js",
+  "license": "MIT",
+  "author": "Aleksandr Molchagin and Dennis Kuzminer"
 }

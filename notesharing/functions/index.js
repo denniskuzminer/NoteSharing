@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
-const app = require("express")();
-var cors = require('cors')
+const express = require('express')
+const cors = require('cors')
+const app = express()
 const auth = require("./util/auth");
 
 const {
@@ -12,12 +13,18 @@ const {
   searchNotes,
 } = require("./APIs/notes");
 
-app.use(cors())
 
 var corsOptions = {
   origin: 'https://notesharing-2d280.web.app',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Credentials'],
+  methods: ['OPTIONS', 'PUT', 'GET', 'POST', 'DELETE'],
+  credentials: true,
+  enablePreflight: true,
+  optionsSuccessStatus: 204
 }
+
+app.use(cors());
+app.options('*', cors(corsOptions))
 
 app.put("/note/:noteId", cors(corsOptions), auth, editNote);
 app.get("/note/:noteId", cors(corsOptions), getOneNote);

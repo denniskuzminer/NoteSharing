@@ -13,6 +13,13 @@ const {
   searchNotes,
 } = require("./APIs/notes");
 
+const {
+  loginUser,
+  signUpUser,
+  uploadProfilePhoto,
+  getUserDetail,
+  updateUserDetails,
+} = require("./APIs/users");
 
 var corsOptions = {
   origin: 'https://notesharing-2d280.web.app',
@@ -22,29 +29,20 @@ var corsOptions = {
   enablePreflight: true,
   optionsSuccessStatus: 204
 }
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
-app.use(cors());
-app.options('*', cors(corsOptions))
+app.put("/note/:noteId", auth, editNote);
+app.get("/note/:noteId", getOneNote);
+app.delete("/note/:noteId",  auth, deleteOneNote);
+app.post("/note", auth, postOneNote);
+app.get("/notes", auth, getAllNotes);
+app.get("/notes/search", auth, searchNotes);
 
-app.put("/note/:noteId", cors(corsOptions), auth, editNote);
-app.get("/note/:noteId", cors(corsOptions), getOneNote);
-app.delete("/note/:noteId", cors(corsOptions),  auth, deleteOneNote);
-app.post("/note", cors(corsOptions), auth, postOneNote);
-app.get("/notes", cors(corsOptions), auth, getAllNotes);
-app.get("/notes/search", cors(corsOptions), auth, searchNotes);
-
-const {
-  loginUser,
-  signUpUser,
-  uploadProfilePhoto,
-  getUserDetail,
-  updateUserDetails,
-} = require("./APIs/users");
-
-app.post("/login", cors(corsOptions), loginUser);
-app.post("/signup", cors(corsOptions), signUpUser);
-app.post("/user/image", cors(corsOptions), auth, uploadProfilePhoto);
-app.get("/user", cors(corsOptions), auth, getUserDetail);
-app.post("/user", cors(corsOptions), auth, updateUserDetails);
+app.post("/login", loginUser);
+app.post("/signup", signUpUser);
+app.post("/user/image", auth, uploadProfilePhoto);
+app.get("/user", auth, getUserDetail);
+app.post("/user", auth, updateUserDetails);
 
 exports.api = functions.https.onRequest(app);

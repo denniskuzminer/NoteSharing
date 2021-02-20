@@ -30,6 +30,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { Divider, TextareaAutosize } from "@material-ui/core";
 
+import homepage from "../pages/home";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });

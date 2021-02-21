@@ -86,7 +86,7 @@ class signup extends Component {
 		axios
 			.post('https://us-central1-notesharing-2d280.cloudfunctions.net/api/signup', newUserData)
 			.then((response) => {
-				localStorage.setItem('AuthToken', `${response.data.token}`);
+				localStorage.setItem('AuthToken', `Bearer ${response.data.token}`);
 				this.setState({ 
 					loading: false,
 				});	
